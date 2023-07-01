@@ -9,6 +9,9 @@ import { Group } from 'src/groups/entities/group.entity';
   timestamps: true,
 })
 export class User {
+  @Field(() => String)
+  _id: MongooseSchema.Types.ObjectId;
+
   @Prop({
     unique: true,
     required: true,
