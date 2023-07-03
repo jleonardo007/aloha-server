@@ -27,11 +27,15 @@ import { join } from 'path';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (config: ConfigService) => ({
-        uri: `mongodb://${config.get<string>('DB_USER')}:${config.get<string>(
-          'DB_PASSWORD',
-        )}@${config.get<string>('DB_HOST')}:${config.get<string>('DB_PORT')}`,
-      }),
+      useFactory: async (config: ConfigService) => {
+        const dbUser = `${config.get<string>('db.user')}:${config.get<string>('db.password')}`;
+        const dbHost = `${config.get<string>('db.host')}:${config.get<string>('db.port')}`;
+        const dbName = config.get<string>('db.name');
+
+        return {
+          uri: `mongodb://${dbUser}@${dbHost}/${dbName}`,
+        };
+      },
     }),
     UsersModule,
     ContactsModule,
