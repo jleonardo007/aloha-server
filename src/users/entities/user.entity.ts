@@ -43,7 +43,7 @@ export class User {
   profilePicture: string;
 
   @Prop({
-    default: '',
+    default: 'Available',
   })
   @Field(() => String, {
     nullable: true,
@@ -56,7 +56,9 @@ export class User {
   @Field(() => Boolean)
   isCloseAccount: boolean;
 
-  @Prop()
+  @Prop({
+    default: Date.now(),
+  })
   @Field(() => GraphQLISODateTime)
   lastTimeConnected: MongooseSchema.Types.Date;
 
