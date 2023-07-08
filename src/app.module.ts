@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ContactsModule } from './contacts/contacts.module';
 import { MessagesModule } from './messages/messages.module';
@@ -10,13 +11,14 @@ import { MediaModule } from './media/media.module';
 import { CallsModule } from './calls/calls.module';
 import { GroupsModule } from './groups/groups.module';
 import database from './config/database';
+import auth from './config/auth';
 import { join } from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [database],
+      load: [database, auth],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -37,6 +39,7 @@ import { join } from 'path';
         };
       },
     }),
+    AuthModule,
     UsersModule,
     ContactsModule,
     MessagesModule,
