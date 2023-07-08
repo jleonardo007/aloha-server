@@ -57,6 +57,12 @@ export class User {
   isCloseAccount: boolean;
 
   @Prop({
+    default: '',
+  })
+  @Field(() => String)
+  refreshToken: string;
+
+  @Prop({
     default: Date.now(),
   })
   @Field(() => GraphQLISODateTime)
