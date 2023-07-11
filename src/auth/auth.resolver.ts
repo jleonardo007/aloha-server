@@ -2,8 +2,8 @@ import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { CreateUserInput, GetUserInput } from 'src/users/dto/user.input';
 import { UserOutput } from 'src/users/dto/user.output';
-import { LocalAuthGuard } from './guards/local';
-import { JwtAuthGuard } from './guards/jwt';
+import { LocalAuthGuard } from './guards/local.guard';
+import { JwtAuthGuard } from './guards/jwt.guard';
 import { AuthService } from './auth.service';
 
 @Resolver()
