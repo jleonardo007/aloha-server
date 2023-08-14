@@ -33,9 +33,16 @@ import { join } from 'path';
         const dbUser = `${config.get<string>('db.user')}:${config.get<string>('db.password')}`;
         const dbHost = `${config.get<string>('db.host')}:${config.get<string>('db.port')}`;
         const dbName = config.get<string>('db.name');
+        const dbCluster = config.get<string>('db.cluster');
+
+        if (process.env.NODE_ENV === 'development') {
+          return {
+            uri: `mongodb://${dbUser}@${dbHost}/${dbName}`,
+          };
+        }
 
         return {
-          uri: `mongodb://${dbUser}@${dbHost}/${dbName}`,
+          uri: `mongodb+srv://${dbUser}${dbCluster}`,
         };
       },
     }),
