@@ -22,7 +22,8 @@ export class CreateUserInput {
   @IsString()
   @IsAlphanumeric()
   @MinLength(8)
-  password: string;
+  @IsOptional()
+  password?: string;
 
   @Field(() => String)
   @IsString()

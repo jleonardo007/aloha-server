@@ -20,7 +20,6 @@ export class User {
   email: string;
 
   @Prop({
-    required: true,
     minlength: 8,
   })
   @Field(() => String)
