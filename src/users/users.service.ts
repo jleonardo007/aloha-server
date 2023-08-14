@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { Model } from 'mongoose';
 import { User } from './entities/user.entity';
-import { CreateUserInput, UpdateUserInput, GetUserInput } from './dto/user.input';
+import { CreateUserInput, /* UpdateUserInput */ GetUserInput } from './dto/user.input';
 
 @Injectable()
 export class UsersService {
@@ -27,4 +27,12 @@ export class UsersService {
   async getUser(id: string): Promise<HydratedDocument<User>> {
     return this.userModel.findById(id);
   }
+
+  /*  updateUser(id: string, updateUserInput: UpdateUserInput) {
+    return `This action updates a #${id} user`;
+  }
+
+  closeUserAccount(id: number) {
+    return `This action removes a #${id} user`;
+  } */
 }
