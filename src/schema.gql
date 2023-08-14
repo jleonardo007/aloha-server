@@ -17,6 +17,31 @@ type Contact {
   name: String
 }
 
+input CreateCallInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateContactInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateGroupInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateMediaInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateMessageInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 input CreateUserInput {
   email: String!
   fullName: String!
@@ -74,13 +99,37 @@ type Message {
 }
 
 type Mutation {
+  createCall(createCallInput: CreateCallInput!): Call!
+  createContact(createContactInput: CreateContactInput!): Contact!
+  createGroup(createGroupInput: CreateGroupInput!): Group!
+  createMedia(createMediaInput: CreateMediaInput!): Media!
+  createMessage(createMessageInput: CreateMessageInput!): Message!
   getNewRefreshToken(userId: String!): String!
+  removeCall(id: Int!): Call!
+  removeContact(id: Int!): Contact!
+  removeGroup(id: Int!): Group!
+  removeMedia(id: Int!): Media!
+  removeMessage(id: Int!): Message!
   signUpWithEmail(signUpInput: CreateUserInput!): UserOutput!
   signUpWithGoogle(tokenInput: TokenInput!): UserOutput!
+  updateCall(updateCallInput: UpdateCallInput!): Call!
+  updateContact(updateContactInput: UpdateContactInput!): Contact!
+  updateGroup(updateGroupInput: UpdateGroupInput!): Group!
+  updateMedia(updateMediaInput: UpdateMediaInput!): Media!
+  updateMessage(updateMessageInput: UpdateMessageInput!): Message!
 }
 
 type Query {
+  call(id: Int!): Call!
+  calls: [Call!]!
+  contact(id: Int!): Contact!
+  contacts: [Contact!]!
   getNewAccessToken(userId: String!): String!
+  group(id: Int!): Group!
+  groups: [Group!]!
+  media(id: Int!): Media!
+  message(id: Int!): Message!
+  messages: [Message!]!
   signInWithEmail(signInInput: GetUserInput!): UserOutput!
   signInWithGoogle(tokenInput: TokenInput!): UserOutput!
   users: [User!]!
@@ -88,6 +137,36 @@ type Query {
 
 input TokenInput {
   tokenFromGoogle: String!
+}
+
+input UpdateCallInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateContactInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateGroupInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateMediaInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateMessageInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }
 
 type User {
