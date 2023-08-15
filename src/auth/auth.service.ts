@@ -7,7 +7,7 @@ import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserInput, GetUserInput } from 'src/users/dto/user.input';
 import { UserOutput } from 'src/users/dto/user.output';
-import { TokenInput } from './dto/auth.input';
+import { TokenInput, GetNewTokenInput } from './dto/auth.input';
 
 const enum TokenType {
   access = 'access',
@@ -56,8 +56,8 @@ export class AuthService {
     }
   }
 
-  async generateNewAccessToken(userId: string): Promise<string> {
-    const user = await this.userService.getUser(userId);
+  async getNewAccessToken(getNewTokenInput: GetNewTokenInput): Promise<string> {
+    const user = await this.userService.getUser(getNewTokenInput._id);
     const isValidToken = await this.jwtService.verifyAsync(user.refreshToken, {
       secret: this.configService.get<string>('jwt.refreshTokenSecret'),
     });
@@ -67,8 +67,8 @@ export class AuthService {
     }
   }
 
-  async generateNewRefreshToken(userId: string): Promise<string> {
-    const user = await this.userService.getUser(userId);
+  async getNewRefreshToken(getNewTokenInput: GetNewTokenInput): Promise<string> {
+    const user = await this.userService.getUser(getNewTokenInput._id);
     user.refreshToken = await this.createJwtToken(TokenType.refresh, user);
 
     await user.save();

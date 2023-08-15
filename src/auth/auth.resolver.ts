@@ -2,7 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { CreateUserInput, GetUserInput } from 'src/users/dto/user.input';
 import { UserOutput } from 'src/users/dto/user.output';
-import { TokenInput } from './dto/auth.input';
+import { TokenInput, GetNewTokenInput } from './dto/auth.input';
 import { LocalAuthGuard } from './guards/local.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { AuthService } from './auth.service';
@@ -34,13 +34,13 @@ export class AuthResolver {
 
   @Query(() => String)
   @UseGuards(JwtAuthGuard)
-  async getNewAccessToken(@Args('userId') userId: string) {
-    return await this.authService.generateNewAccessToken(userId);
+  async getNewAccessToken(@Args('getNewTokenInput') getNewTokenInput: GetNewTokenInput) {
+    return await this.authService.getNewAccessToken(getNewTokenInput);
   }
 
   @Mutation(() => String)
   @UseGuards(JwtAuthGuard)
-  async getNewRefreshToken(@Args('userId') userId: string) {
-    return await this.authService.generateNewRefreshToken(userId);
+  async getNewRefreshToken(@Args('getNewTokenInput') getNewTokenInput: GetNewTokenInput) {
+    return await this.authService.getNewRefreshToken(getNewTokenInput);
   }
 }
