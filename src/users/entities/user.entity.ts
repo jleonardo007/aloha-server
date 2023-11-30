@@ -3,10 +3,17 @@ import { Schema as MongooseSchema } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Contact } from 'src/contacts/entities/contact.entity';
 import { Group } from 'src/groups/entities/group.entity';
-
+import { Chat } from 'src/chats/entities/chat.entity';
+import { Call } from 'src/calls/entities/call.entity';
 @ObjectType()
 @Schema({
   timestamps: true,
+  toJSON: {
+    virtuals: true,
+  },
+  toObject: {
+    virtuals: true,
+  },
 })
 export class User {
   @Field(() => String)
@@ -67,27 +74,53 @@ export class User {
   @Field(() => GraphQLISODateTime)
   lastTimeConnected: MongooseSchema.Types.Date;
 
-  @Prop({
-    type: [
-      {
-        type: MongooseSchema.Types.ObjectId,
-        ref: 'Contact',
-      },
-    ],
-  })
-  @Field(() => [Contact])
-  contacts: [Contact];
+  @Field(() => [Contact], { defaultValue: [] })
+  contacts: Contact[];
 
-  @Prop({
-    type: [
-      {
-        type: MongooseSchema.Types.ObjectId,
-        ref: 'Group',
-      },
-    ],
-  })
-  @Field(() => [Group])
-  groups: [Group];
+  @Field(() => [Group], { defaultValue: [] })
+  groups: Group[];
+
+  @Field(() => [Chat], { defaultValue: [] })
+  sentChats: Chat[];
+
+  @Field(() => [Chat])
+  receivedChats: Chat[];
+
+  @Field(() => [Call], { defaultValue: [] })
+  sentCalls: Call[];
+
+  @Field(() => [Call])
+  receivedCalls: Call[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.virtual('contacts', {
+  ref: 'Contact',
+  localField: '_id',
+  foreignField: 'createdBy',
+});
+
+UserSchema.virtual('sentChats', {
+  ref: 'Chat',
+  localField: '_id',
+  foreignField: 'sentBy',
+});
+
+UserSchema.virtual('receivedChats', {
+  ref: 'Chat',
+  localField: '_id',
+  foreignField: 'receivedBy',
+});
+
+UserSchema.virtual('sentCalls', {
+  ref: 'Call',
+  localField: '_id',
+  foreignField: 'sentBy',
+});
+
+UserSchema.virtual('receivedCalls', {
+  ref: 'Call',
+  localField: '_id',
+  foreignField: 'receivedBy',
+});
