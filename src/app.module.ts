@@ -10,6 +10,7 @@ import { MessagesModule } from './messages/messages.module';
 import { MediaModule } from './media/media.module';
 import { CallsModule } from './calls/calls.module';
 import { GroupsModule } from './groups/groups.module';
+import { ChatsModule } from './chats/chats.module';
 import database from './config/database';
 import auth from './config/auth';
 import { join } from 'path';
@@ -53,6 +54,7 @@ import { join } from 'path';
     MediaModule,
     CallsModule,
     GroupsModule,
+    ChatsModule,
   ],
 })
 export class AppModule {}
