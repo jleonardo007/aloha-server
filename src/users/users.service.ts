@@ -15,7 +15,31 @@ export class UsersService {
   }
 
   async getUserByEmail(getUserInput: GetUserInput): Promise<HydratedDocument<User>> {
-    const user = await this.userModel.findOne({ email: getUserInput.email }).exec();
+    const user = await this.userModel
+      .findOne({ email: getUserInput.email })
+      .populate({
+        path: 'contacts',
+        populate: {
+          path: 'user',
+          select: ['fullName', 'profilePicture', 'status', 'lastTimeConnected', 'isCloseAccount'],
+          model: 'User',
+        },
+      })
+      .populate('sentChats', {
+        populate: {
+          path: 'messages',
+          model: 'Message',
+        },
+      })
+      .populate('receivedChats', {
+        populate: {
+          path: 'messages',
+          model: 'Message',
+        },
+      })
+      .populate('sentCalls')
+      .populate('receivedCalls')
+      .exec();
 
     if (!user) {
       throw new NotFoundException('User not found', {});

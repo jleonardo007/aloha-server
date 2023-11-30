@@ -56,6 +56,22 @@ export class AuthService {
     }
   }
 
+  private createUserResponse(user: User, accessToken: string): UserOutput {
+    return {
+      ...user,
+      accessToken,
+      chats: [
+        ...(user.sentChats ? user.sentChats : []),
+        ...(user.receivedChats ? user.receivedChats : []),
+      ],
+      calls: [
+        ...(user.sentCalls ? user.sentCalls : []),
+        ...(user.receivedCalls ? user.receivedCalls : []),
+      ],
+    };
+    ``;
+  }
+
   async getNewAccessToken(getNewTokenInput: GetNewTokenInput): Promise<string> {
     const user = await this.userService.getUser(getNewTokenInput._id);
     const isValidToken = await this.jwtService.verifyAsync(user.refreshToken, {
@@ -107,25 +123,20 @@ export class AuthService {
     });
 
     newUser.refreshToken = await this.createJwtToken(TokenType.refresh, newUser);
-    await newUser.save();
+    const user = (await newUser.save()).toObject();
+    const accessToken = await this.createJwtToken(TokenType.access, newUser);
 
-    return {
-      ...newUser.toObject(),
-      accessToken: await this.createJwtToken(TokenType.access, newUser),
-    };
+    return this.createUserResponse(user, accessToken);
   }
 
   async signInWithEmail(signInInput: GetUserInput): Promise<UserOutput> {
-    const user = await this.userService.getUserByEmail(signInInput);
+    const user = (await this.userService.getUserByEmail(signInInput)).toObject();
     const accessToken = await this.createJwtToken(TokenType.access, user);
 
-    return {
-      ...user.toObject(),
-      accessToken,
-    };
+    return this.createUserResponse(user, accessToken);
   }
 
-  async signUpWithGoogle(token: TokenInput) {
+  async signUpWithGoogle(token: TokenInput): Promise<UserOutput> {
     const payload = await this.getPayloadFormToken(token);
     const newUser = await this.userService.createNewUser({
       fullName: payload.name,
@@ -133,23 +144,19 @@ export class AuthService {
       profilePicture: payload.picture,
     });
 
-    newUser.refreshToken = await this.createJwtToken(TokenType.refresh, newUser);
-    await newUser.save();
+    const user = (await newUser.save()).toObject();
+    const accessToken = await this.createJwtToken(TokenType.access, newUser);
 
-    return {
-      ...newUser.toObject(),
-      accessToken: await this.createJwtToken(TokenType.access, newUser),
-    };
+    return this.createUserResponse(user, accessToken);
   }
 
-  async signInWithGoogle(token: TokenInput) {
+  async signInWithGoogle(token: TokenInput): Promise<UserOutput> {
     const payload = await this.getPayloadFormToken(token);
-    const user = await this.userService.getUserByEmail({ email: payload.email, password: '' });
+    const user = (
+      await this.userService.getUserByEmail({ email: payload.email, password: '' })
+    ).toObject();
     const accessToken = await this.createJwtToken(TokenType.access, user);
 
-    return {
-      ...user.toObject(),
-      accessToken,
-    };
+    return this.createUserResponse(user, accessToken);
   }
 }
