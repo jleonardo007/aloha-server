@@ -3,18 +3,41 @@
 # ------------------------------------------------------
 
 type Call {
+  _id: String!
   duration: String!
   finishedAt: DateTime!
   isMissed: Boolean!
+  receivedBy: String!
+  sentBy: String!
   startedAt: DateTime!
-  startedBy: User!
+}
+
+type Chat {
+  _id: String!
+  lastMessageTime: DateTime!
+  messages: [Message!]!
+  receivedBy: String!
+  sentBy: String!
 }
 
 type Contact {
-  calls: [Call!]!
-  contactInfo: User!
-  messages: [Message!]!
-  name: String
+  _id: String!
+  createdBy: String!
+  email: String!
+  name: String!
+  user: User
+}
+
+type ContactOutput {
+  _id: String!
+  createdBy: String!
+  email: String!
+  name: String!
+  user: PartialUser
+}
+
+type ContactServiceResult {
+  message: String!
 }
 
 input CreateCallInput {
@@ -22,9 +45,15 @@ input CreateCallInput {
   exampleField: Int!
 }
 
-input CreateContactInput {
+input CreateChatInput {
   """Example field (placeholder)"""
   exampleField: Int!
+}
+
+input CreateContactInput {
+  createdBy: String!
+  email: String!
+  name: String!
 }
 
 input CreateGroupInput {
@@ -56,6 +85,14 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input DeleteContactInput {
+  id: String!
+}
+
+input GetContactInput {
+  id: String!
+}
+
 input GetNewTokenInput {
   _id: String!
 }
@@ -80,10 +117,15 @@ type Media {
 }
 
 type Message {
+  _id: String!
+  chat: String!
   deletedBy: User!
 
   """User that sends the message"""
   from: User!
+
+  """User that sends chat"""
+  group: String!
   hasMedia: Boolean!
   isDeleted: Boolean!
   isRead: Boolean!
@@ -104,30 +146,44 @@ type Message {
 
 type Mutation {
   createCall(createCallInput: CreateCallInput!): Call!
-  createContact(createContactInput: CreateContactInput!): Contact!
+  createChat(createChatInput: CreateChatInput!): Chat!
+  createContact(createContactInput: CreateContactInput!): ContactOutput!
   createGroup(createGroupInput: CreateGroupInput!): Group!
   createMedia(createMediaInput: CreateMediaInput!): Media!
   createMessage(createMessageInput: CreateMessageInput!): Message!
+  deleteContact(deleteContactInput: DeleteContactInput!): ContactServiceResult!
   getNewRefreshToken(getNewTokenInput: GetNewTokenInput!): String!
   removeCall(id: Int!): Call!
-  removeContact(id: Int!): Contact!
+  removeChat(id: Int!): Chat!
   removeGroup(id: Int!): Group!
   removeMedia(id: Int!): Media!
   removeMessage(id: Int!): Message!
   signUpWithEmail(signUpInput: CreateUserInput!): UserOutput!
   signUpWithGoogle(tokenInput: TokenInput!): UserOutput!
   updateCall(updateCallInput: UpdateCallInput!): Call!
-  updateContact(updateContactInput: UpdateContactInput!): Contact!
+  updateChat(updateChatInput: UpdateChatInput!): Chat!
+  updateContact(updateContactInput: UpdateContactInput!): ContactServiceResult!
   updateGroup(updateGroupInput: UpdateGroupInput!): Group!
   updateMedia(updateMediaInput: UpdateMediaInput!): Media!
   updateMessage(updateMessageInput: UpdateMessageInput!): Message!
 }
 
+type PartialUser {
+  _id: String
+  email: String
+  fullName: String
+  isCloseAccount: Boolean
+  lastTimeConnected: DateTime
+  profilePicture: String
+  status: String
+}
+
 type Query {
   call(id: Int!): Call!
   calls: [Call!]!
-  contact(id: Int!): Contact!
-  contacts: [Contact!]!
+  chat(id: Int!): Chat!
+  chats: [Chat!]!
+  getContact(getContactInput: GetContactInput!): Contact!
   getNewAccessToken(getNewTokenInput: GetNewTokenInput!): String!
   group(id: Int!): Group!
   groups: [Group!]!
@@ -149,10 +205,15 @@ input UpdateCallInput {
   id: Int!
 }
 
-input UpdateContactInput {
+input UpdateChatInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!
+}
+
+input UpdateContactInput {
+  id: String!
+  name: String!
 }
 
 input UpdateGroupInput {
@@ -183,13 +244,19 @@ type User {
   lastTimeConnected: DateTime!
   password: String!
   profilePicture: String
+  receivedCalls: [Call!]!
+  receivedChats: [Chat!]!
   refreshToken: String!
+  sentCalls: [Call!]!
+  sentChats: [Chat!]!
   status: String
 }
 
 type UserOutput {
   _id: String!
   accessToken: String!
+  calls: [Call!]!
+  chats: [Chat!]!
   contacts: [Contact!]!
   email: String!
   fullName: String!
