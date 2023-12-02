@@ -1,35 +1,55 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { ContactsService } from './contacts.service';
 import { Contact } from './entities/contact.entity';
-import { CreateContactInput } from './dto/create-contact.input';
-import { UpdateContactInput } from './dto/update-contact.input';
+import {
+  CreateContactInput,
+  GetContactInput,
+  UpdateContactInput,
+  DeleteContactInput,
+} from './dto/contact.input';
+import { ContactOutput, ContactServiceResult } from './dto/contact.output';
 
 @Resolver(() => Contact)
 export class ContactsResolver {
   constructor(private readonly contactsService: ContactsService) {}
 
-  @Mutation(() => Contact)
-  createContact(@Args('createContactInput') createContactInput: CreateContactInput) {
-    return this.contactsService.create(createContactInput);
+  @Query(() => Contact)
+  async getContact(@Args('getContactInput') getContactInput: GetContactInput): Promise<Contact> {
+    return this.contactsService.getContact(getContactInput);
   }
 
-  @Query(() => [Contact], { name: 'contacts' })
-  findAll() {
-    return this.contactsService.findAll();
+  @Mutation(() => ContactOutput)
+  async createContact(
+    @Args('createContactInput') createContactInput: CreateContactInput,
+  ): Promise<Contact> {
+    return this.contactsService.createContact(createContactInput);
   }
 
-  @Query(() => Contact, { name: 'contact' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.contactsService.findOne(id);
+  @Mutation(() => ContactServiceResult)
+  async updateContact(
+    @Args('updateContactInput') updateContactInput: UpdateContactInput,
+  ): Promise<ContactServiceResult> {
+    try {
+      await this.contactsService.updateContact(updateContactInput);
+
+      return {
+        message: 'Contact updated succesfully!',
+      };
+    } catch (error) {
+      return {
+        message: 'Cannot update contact, please try later!',
+      };
+    }
   }
 
-  @Mutation(() => Contact)
-  updateContact(@Args('updateContactInput') updateContactInput: UpdateContactInput) {
-    return this.contactsService.update(updateContactInput.id, updateContactInput);
-  }
+  @Mutation(() => ContactServiceResult)
+  async deleteContact(
+    @Args('deleteContactInput') deleteContactInput: DeleteContactInput,
+  ): Promise<ContactServiceResult> {
+    await this.contactsService.deleteContact(deleteContactInput);
 
-  @Mutation(() => Contact)
-  removeContact(@Args('id', { type: () => Int }) id: number) {
-    return this.contactsService.remove(id);
+    return {
+      message: 'Contact deleted!',
+    };
   }
 }
