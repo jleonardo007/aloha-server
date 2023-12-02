@@ -1,52 +1,44 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Schema as MongooseSchema } from 'mongoose';
+import { Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { User } from 'src/users/entities/user.entity';
-import { Message } from 'src/messages/entities/message.entity';
-import { Call } from 'src/calls/entities/call.entity';
 
 @ObjectType()
 @Schema({
   timestamps: true,
 })
 export class Contact {
+  @Field(() => String)
+  _id: Types.ObjectId;
+
   @Prop({
-    type: MongooseSchema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'User',
   })
-  @Field(() => User)
-  contactInfo: User;
+  @Field(() => String)
+  createdBy: Types.ObjectId;
 
   @Prop({
-    type: [
-      {
-        type: MongooseSchema.Types.ObjectId,
-        ref: 'Message',
-      },
-    ],
+    type: Types.ObjectId,
+    ref: 'User',
   })
-  @Field(() => [Message])
-  messages: [Message];
-
-  @Prop({
-    type: [
-      {
-        type: MongooseSchema.Types.ObjectId,
-        ref: 'Call',
-      },
-    ],
-  })
-  @Field(() => [Call])
-  calls: [Call];
+  @Field(() => User, { nullable: true })
+  user: Types.ObjectId;
 
   @Prop({
     minlength: 1,
     maxlength: 60,
+    required: true,
   })
-  @Field(() => String, {
-    nullable: true,
-  })
+  @Field(() => String)
   name: string;
+
+  @Prop({
+    unique: true,
+    required: true,
+  })
+  @Field(() => String)
+  email: string;
 }
 
 export const ContactSchema = SchemaFactory.createForClass(Contact);
