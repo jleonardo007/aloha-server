@@ -7,6 +7,25 @@ import { Media } from 'src/media/entities/media.entity';
 @ObjectType()
 @Schema()
 export class Message {
+  @Field(() => String)
+  _id: MongooseSchema.Types.ObjectId;
+
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'Chat',
+    required: true,
+  })
+  @Field(() => String)
+  chat: MongooseSchema.Types.ObjectId;
+
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'Group',
+    required: true,
+  })
+  @Field(() => String, { description: 'User that sends chat' })
+  group: MongooseSchema.Types.ObjectId;
+
   @Prop({
     type: [
       {

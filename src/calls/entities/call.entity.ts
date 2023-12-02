@@ -1,17 +1,26 @@
 import { ObjectType, Field, GraphQLISODateTime } from '@nestjs/graphql';
 import { Schema as MongooseSchema } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { User } from 'src/users/entities/user.entity';
 
 @ObjectType()
 @Schema()
 export class Call {
+  @Field(() => String)
+  _id: MongooseSchema.Types.ObjectId;
+
   @Prop({
     type: MongooseSchema.Types.ObjectId,
     ref: 'User',
   })
-  @Field(() => User)
-  startedBy: User;
+  @Field(() => String)
+  sentBy: MongooseSchema.Types.ObjectId;
+
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'User',
+  })
+  @Field(() => String)
+  receivedBy: MongooseSchema.Types.ObjectId;
 
   @Prop()
   @Field(() => GraphQLISODateTime)
