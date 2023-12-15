@@ -33,7 +33,6 @@ export class AuthResolver {
   }
 
   @Query(() => String)
-  @UseGuards(JwtAuthGuard)
   async getNewAccessToken(@Args('getNewTokenInput') getNewTokenInput: GetNewTokenInput) {
     return await this.authService.getNewAccessToken(getNewTokenInput);
   }
