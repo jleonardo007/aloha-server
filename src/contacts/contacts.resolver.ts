@@ -1,3 +1,4 @@
+import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { ContactsService } from './contacts.service';
 import { Contact } from './entities/contact.entity';
@@ -8,7 +9,9 @@ import {
   DeleteContactInput,
 } from './dto/contact.input';
 import { ContactOutput, ContactServiceResult } from './dto/contact.output';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
+@UseGuards(JwtAuthGuard)
 @Resolver(() => Contact)
 export class ContactsResolver {
   constructor(private readonly contactsService: ContactsService) {}
