@@ -16,7 +16,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 export class ContactsResolver {
   constructor(private readonly contactsService: ContactsService) {}
 
-  @Query(() => Contact)
+  @Query(() => ContactOutput)
   async getContact(@Args('getContactInput') getContactInput: GetContactInput): Promise<Contact> {
     return this.contactsService.getContact(getContactInput);
   }

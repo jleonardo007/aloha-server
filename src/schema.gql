@@ -183,7 +183,7 @@ type Query {
   calls: [Call!]!
   chat(id: Int!): Chat!
   chats: [Chat!]!
-  getContact(getContactInput: GetContactInput!): Contact!
+  getContact(getContactInput: GetContactInput!): ContactOutput!
   getNewAccessToken(getNewTokenInput: GetNewTokenInput!): String!
   group(id: Int!): Group!
   groups: [Group!]!
