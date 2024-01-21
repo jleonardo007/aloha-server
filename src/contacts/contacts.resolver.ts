@@ -21,6 +21,11 @@ export class ContactsResolver {
     return this.contactsService.getContact(getContactInput);
   }
 
+  @Query(() => [ContactOutput])
+  async getUserContactsList(@Args('getListInput') getListInput: GetContactInput) {
+    return this.contactsService.getUserContactList(getListInput);
+  }
+
   @Mutation(() => ContactOutput)
   async createContact(
     @Args('createContactInput') createContactInput: CreateContactInput,

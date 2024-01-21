@@ -58,4 +58,16 @@ export class ContactsService {
   async deleteContact(deleteContactInput: DeleteContactInput) {
     return this.contactModel.findOneAndDelete({ _id: deleteContactInput.id });
   }
+
+  async getUserContactList(getListIput: GetContactInput) {
+    return this.contactModel
+      .find({
+        createdBy: new mongo.ObjectId(getListIput.id),
+      })
+      .populate({
+        path: 'user',
+        select: ['fullName', 'profilePicture', 'status', 'lastTimeConnected', 'isCloseAccount'],
+        model: 'User',
+      });
+  }
 }

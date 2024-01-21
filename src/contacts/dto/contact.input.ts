@@ -24,7 +24,7 @@ export class CreateContactInput {
 export class GetContactInput {
   @IsMongoId()
   @Field(() => String)
-  id: string;
+  id: Types.ObjectId;
 }
 
 @InputType()

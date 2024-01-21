@@ -185,6 +185,7 @@ type Query {
   chats: [Chat!]!
   getContact(getContactInput: GetContactInput!): ContactOutput!
   getNewAccessToken(getNewTokenInput: GetNewTokenInput!): String!
+  getUserContactsList(getListInput: GetContactInput!): [ContactOutput!]!
   group(id: Int!): Group!
   groups: [Group!]!
   media(id: Int!): Media!
