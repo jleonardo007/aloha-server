@@ -93,10 +93,6 @@ input GetContactInput {
   id: String!
 }
 
-input GetNewTokenInput {
-  _id: String!
-}
-
 input GetUserInput {
   email: String!
   password: String!
@@ -152,7 +148,6 @@ type Mutation {
   createMedia(createMediaInput: CreateMediaInput!): Media!
   createMessage(createMessageInput: CreateMessageInput!): Message!
   deleteContact(deleteContactInput: DeleteContactInput!): ContactServiceResult!
-  getNewRefreshToken(getNewTokenInput: GetNewTokenInput!): String!
   removeCall(id: Int!): Call!
   removeChat(id: Int!): Chat!
   removeGroup(id: Int!): Group!
@@ -184,7 +179,6 @@ type Query {
   chat(id: Int!): Chat!
   chats: [Chat!]!
   getContact(getContactInput: GetContactInput!): ContactOutput!
-  getNewAccessToken(getNewTokenInput: GetNewTokenInput!): String!
   getUserContactsList(getListInput: GetContactInput!): [ContactOutput!]!
   group(id: Int!): Group!
   groups: [Group!]!
@@ -194,6 +188,7 @@ type Query {
   signInWithEmail(signInInput: GetUserInput!): UserOutput!
   signInWithGoogle(tokenInput: TokenInput!): UserOutput!
   users: [User!]!
+  verifyExpiredCrendials: String!
 }
 
 input TokenInput {
@@ -255,7 +250,6 @@ type User {
 
 type UserOutput {
   _id: String!
-  accessToken: String!
   calls: [Call!]!
   chats: [Chat!]!
   contacts: [Contact!]!

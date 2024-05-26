@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ContactsModule } from './contacts/contacts.module';
@@ -11,6 +13,7 @@ import { MediaModule } from './media/media.module';
 import { CallsModule } from './calls/calls.module';
 import { GroupsModule } from './groups/groups.module';
 import { ChatsModule } from './chats/chats.module';
+import { AccessTokenGuard } from './guards/access-token-guard';
 import database from './config/database';
 import auth from './config/auth';
 import { join } from 'path';
@@ -26,6 +29,7 @@ import { join } from 'path';
       playground: true,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
+      context: ({ req }) => ({ req, res: req.res }),
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -47,6 +51,7 @@ import { join } from 'path';
         };
       },
     }),
+    JwtModule.register({}),
     AuthModule,
     UsersModule,
     ContactsModule,
@@ -55,6 +60,12 @@ import { join } from 'path';
     CallsModule,
     GroupsModule,
     ChatsModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AccessTokenGuard,
+    },
   ],
 })
 export class AppModule {}

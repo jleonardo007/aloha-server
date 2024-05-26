@@ -1,45 +1,71 @@
-import { UseGuards } from '@nestjs/common';
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { UseGuards, UnauthorizedException } from '@nestjs/common';
+import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { Response, Request } from 'express';
 import { CreateUserInput, GetUserInput } from 'src/users/dto/user.input';
 import { UserOutput } from 'src/users/dto/user.output';
-import { TokenInput, GetNewTokenInput } from './dto/auth.input';
+import { TokenInput } from './dto/auth.input';
 import { LocalAuthGuard } from './guards/local.guard';
-import { JwtAuthGuard } from './guards/jwt.guard';
 import { AuthService } from './auth.service';
+import { Public } from 'src/decorators/public.decorator';
 
 @Resolver()
+@Public()
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Mutation(() => UserOutput)
-  async signUpWithEmail(@Args('signUpInput') signUpInput: CreateUserInput): Promise<UserOutput> {
-    return await this.authService.signUpWithEmail(signUpInput);
+  async signUpWithEmail(
+    @Context('res') response: Response,
+    @Args('signUpInput') signUpInput: CreateUserInput,
+  ): Promise<UserOutput> {
+    const { user, accessToken } = await this.authService.signUpWithEmail(signUpInput);
+    this.authService.sendCredentialsCookie(response, { accessToken, userId: user._id });
+
+    return user;
   }
 
   @Query(() => UserOutput)
   @UseGuards(LocalAuthGuard)
-  async signInWithEmail(@Args('signInInput') signInInput: GetUserInput) {
-    return await this.authService.signInWithEmail(signInInput);
+  async signInWithEmail(
+    @Context('res') response: Response,
+    @Args('signInInput') signInInput: GetUserInput,
+  ) {
+    const { user, accessToken } = await this.authService.signInWithEmail(signInInput);
+    this.authService.sendCredentialsCookie(response, { accessToken, userId: user._id });
+
+    return user;
   }
 
   @Mutation(() => UserOutput)
-  async signUpWithGoogle(@Args('tokenInput') tokenInput: TokenInput) {
-    return await this.authService.signUpWithGoogle(tokenInput);
+  async signUpWithGoogle(
+    @Context('res') response: Response,
+    @Args('tokenInput') tokenInput: TokenInput,
+  ) {
+    const { user, accessToken } = await this.authService.signUpWithGoogle(tokenInput);
+    this.authService.sendCredentialsCookie(response, { accessToken, userId: user._id });
+
+    return user;
   }
 
   @Query(() => UserOutput)
-  async signInWithGoogle(@Args('tokenInput') tokenInput: TokenInput): Promise<UserOutput> {
-    return await this.authService.signInWithGoogle(tokenInput);
+  async signInWithGoogle(
+    @Context('res') response: Response,
+    @Args('tokenInput') tokenInput: TokenInput,
+  ): Promise<UserOutput> {
+    const { user, accessToken } = await this.authService.signInWithGoogle(tokenInput);
+    this.authService.sendCredentialsCookie(response, { accessToken, userId: user._id });
+
+    return user;
   }
 
   @Query(() => String)
-  async getNewAccessToken(@Args('getNewTokenInput') getNewTokenInput: GetNewTokenInput) {
-    return await this.authService.getNewAccessToken(getNewTokenInput);
-  }
+  verifyExpiredCrendials(@Context('req') request: Request): string {
+    const credentials = request.cookies['credentials'];
 
-  @Mutation(() => String)
-  @UseGuards(JwtAuthGuard)
-  async getNewRefreshToken(@Args('getNewTokenInput') getNewTokenInput: GetNewTokenInput) {
-    return await this.authService.getNewRefreshToken(getNewTokenInput);
+    if (!credentials) {
+      throw new UnauthorizedException('NOT_AUTHORIZED', { description: 'CREDENTIALS_EXPIRED' });
+    }
+
+    return 'CREDENTIALS_NOT_EXPIRED';
   }
 }

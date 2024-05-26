@@ -11,9 +11,6 @@ export class UserOutput extends OmitType(User, [
   'sentCalls',
   'receivedCalls',
 ]) {
-  @Field(() => String)
-  accessToken: string;
-
   @Field(() => [Chat])
   chats: Chat[];
 

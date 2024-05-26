@@ -42,7 +42,7 @@ export class UsersService {
       .exec();
 
     if (!user) {
-      throw new NotFoundException('User not found', {});
+      throw new NotFoundException('NOT_FOUND', { description: 'USER_NOT_FOUND' });
     }
 
     return user;

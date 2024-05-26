@@ -1,7 +1,6 @@
 import { InputType, Field, PickType } from '@nestjs/graphql';
 import {
   IsString,
-  IsAlphanumeric,
   MaxLength,
   IsOptional,
   IsUrl,
@@ -20,7 +19,6 @@ export class CreateUserInput {
 
   @Field(() => String)
   @IsString()
-  @IsAlphanumeric()
   @MinLength(8)
   @IsOptional()
   password?: string;
