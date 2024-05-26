@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request, Response } from 'express';
+import { NOT_AUTHORIZED } from 'src/errors';
 
 type Payload = {
   sub: string;
@@ -28,7 +29,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: Payload): Promise<Payload> {
     if (!payload.sub) {
-      throw new UnauthorizedException('Invalid Access');
+      throw new UnauthorizedException(NOT_AUTHORIZED.MESSAGE, {
+        description: NOT_AUTHORIZED.DESCRIPTION.INVALID_JWT,
+      });
     }
 
     return payload;

@@ -2,9 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { Model } from 'mongoose';
+import { NOT_FOUND } from 'src/errors';
 import { User } from './entities/user.entity';
 import { CreateUserInput, /* UpdateUserInput */ GetUserInput } from './dto/user.input';
-
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}
@@ -42,7 +42,9 @@ export class UsersService {
       .exec();
 
     if (!user) {
-      throw new NotFoundException('NOT_FOUND', { description: 'USER_NOT_FOUND' });
+      throw new NotFoundException(NOT_FOUND.MESSAGE, {
+        description: NOT_FOUND.DESCRIPTION.USER_NOT_FOUND,
+      });
     }
 
     return user;

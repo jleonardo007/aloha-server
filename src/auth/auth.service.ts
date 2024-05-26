@@ -10,9 +10,9 @@ import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserInput, GetUserInput } from 'src/users/dto/user.input';
 import { UserOutput } from 'src/users/dto/user.output';
+import { NOT_AUTHORIZED } from 'src/errors';
 import { TokenInput } from './dto/auth.input';
 import { JsonWebToken } from './entities/jwt-token.entity';
-
 const enum TokenType {
   access = 'access',
   refresh = 'refresh',
@@ -85,7 +85,9 @@ export class AuthService {
     const isJwtRevoved = await this.isTokenRevoked(user.refreshToken);
 
     if (isJwtRevoved) {
-      throw new UnauthorizedException('NOT_AUTHORIZED', { description: 'REFRESH_TOKEN_REVOKED' });
+      throw new UnauthorizedException(NOT_AUTHORIZED.MESSAGE, {
+        description: NOT_AUTHORIZED.DESCRIPTION.REFRESH_TOKEN_REVOKED,
+      });
     }
 
     try {
@@ -122,7 +124,9 @@ export class AuthService {
     if (validPassword) {
       return user;
     } else {
-      throw new UnauthorizedException('NOT_AUTHORIZED', { description: 'WRONG_PASSWORD' });
+      throw new UnauthorizedException(NOT_AUTHORIZED.MESSAGE, {
+        description: NOT_AUTHORIZED.DESCRIPTION.WRONG_PASSWORD,
+      });
     }
   }
 
@@ -135,7 +139,9 @@ export class AuthService {
 
       return await verifiedToken.getPayload();
     } catch (error) {
-      throw new UnauthorizedException('NOT_AUTHORIZED', { description: 'INVALID_JWT_FROM_GOOGLE' });
+      throw new UnauthorizedException(NOT_AUTHORIZED.MESSAGE, {
+        description: NOT_AUTHORIZED.DESCRIPTION.INVALID_JWT_FROM_GOOGLE,
+      });
     }
   }
 

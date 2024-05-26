@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { AuthService } from 'src/auth/auth.service';
-
+import { NOT_AUTHORIZED } from 'src/errors';
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
   constructor(
@@ -30,9 +30,13 @@ export class AccessTokenGuard implements CanActivate {
     }
 
     if (!credentials) {
-      throw new UnauthorizedException('NOT_AUTHORIZED', { description: 'CREDENTIALS_NOT_FOUND' });
+      throw new UnauthorizedException(NOT_AUTHORIZED.MESSAGE, {
+        description: NOT_AUTHORIZED.DESCRIPTION.CREDENTIALS_NOT_FOUND,
+      });
     } else if (await this.authService.isTokenRevoked(credentials.accessToken)) {
-      throw new UnauthorizedException('NOT_AUTHORIZED', { description: 'ACCESS_TOKEN_REVOKED' });
+      throw new UnauthorizedException(NOT_AUTHORIZED.MESSAGE, {
+        description: NOT_AUTHORIZED.DESCRIPTION.ACCESS_TOKEN_REVOKED,
+      });
     } else {
       try {
         await this.jwtService.verifyAsync(credentials.accessToken, {

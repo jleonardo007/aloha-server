@@ -7,7 +7,7 @@ import { TokenInput } from './dto/auth.input';
 import { LocalAuthGuard } from './guards/local.guard';
 import { AuthService } from './auth.service';
 import { Public } from 'src/decorators/public.decorator';
-
+import { NOT_AUTHORIZED } from 'src/errors';
 @Resolver()
 @Public()
 export class AuthResolver {
@@ -63,7 +63,9 @@ export class AuthResolver {
     const credentials = request.cookies['credentials'];
 
     if (!credentials) {
-      throw new UnauthorizedException('NOT_AUTHORIZED', { description: 'CREDENTIALS_EXPIRED' });
+      throw new UnauthorizedException(NOT_AUTHORIZED.MESSAGE, {
+        description: NOT_AUTHORIZED.DESCRIPTION.CREDENTIALS_EXPIRED,
+      });
     }
 
     return 'CREDENTIALS_NOT_EXPIRED';
