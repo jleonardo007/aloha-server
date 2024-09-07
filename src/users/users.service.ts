@@ -9,14 +9,14 @@ import { CreateUserInput, /* UpdateUserInput */ GetUserInput } from './dto/user.
 export class UsersService {
   constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}
 
-  async createNewUser(createUserInput: CreateUserInput): Promise<HydratedDocument<User>> {
-    const user = await new this.userModel(createUserInput).save();
+  async createNewUser(input: CreateUserInput): Promise<HydratedDocument<User>> {
+    const user = await new this.userModel(input).save();
     return user;
   }
 
-  async getUserByEmail(getUserInput: GetUserInput): Promise<HydratedDocument<User>> {
+  async getUserByEmail(input: GetUserInput): Promise<HydratedDocument<User>> {
     const user = await this.userModel
-      .findOne({ email: getUserInput.email })
+      .findOne({ email: input.email })
       .populate({
         path: 'contacts',
         populate: {

@@ -16,9 +16,9 @@ export class AuthResolver {
   @Mutation(() => UserOutput)
   async signUpWithEmail(
     @Context('res') response: Response,
-    @Args('signUpInput') signUpInput: CreateUserInput,
+    @Args('input') input: CreateUserInput,
   ): Promise<UserOutput> {
-    const { user, accessToken } = await this.authService.signUpWithEmail(signUpInput);
+    const { user, accessToken } = await this.authService.signUpWithEmail(input);
     this.authService.sendCredentialsCookie(response, { accessToken, userId: user._id });
 
     return user;
@@ -26,22 +26,16 @@ export class AuthResolver {
 
   @Query(() => UserOutput)
   @UseGuards(LocalAuthGuard)
-  async signInWithEmail(
-    @Context('res') response: Response,
-    @Args('signInInput') signInInput: GetUserInput,
-  ) {
-    const { user, accessToken } = await this.authService.signInWithEmail(signInInput);
+  async signInWithEmail(@Context('res') response: Response, @Args('input') input: GetUserInput) {
+    const { user, accessToken } = await this.authService.signInWithEmail(input);
     this.authService.sendCredentialsCookie(response, { accessToken, userId: user._id });
 
     return user;
   }
 
   @Mutation(() => UserOutput)
-  async signUpWithGoogle(
-    @Context('res') response: Response,
-    @Args('tokenInput') tokenInput: TokenInput,
-  ) {
-    const { user, accessToken } = await this.authService.signUpWithGoogle(tokenInput);
+  async signUpWithGoogle(@Context('res') response: Response, @Args('input') input: TokenInput) {
+    const { user, accessToken } = await this.authService.signUpWithGoogle(input);
     this.authService.sendCredentialsCookie(response, { accessToken, userId: user._id });
 
     return user;
@@ -50,9 +44,9 @@ export class AuthResolver {
   @Query(() => UserOutput)
   async signInWithGoogle(
     @Context('res') response: Response,
-    @Args('tokenInput') tokenInput: TokenInput,
+    @Args('input') input: TokenInput,
   ): Promise<UserOutput> {
-    const { user, accessToken } = await this.authService.signInWithGoogle(tokenInput);
+    const { user, accessToken } = await this.authService.signInWithGoogle(input);
     this.authService.sendCredentialsCookie(response, { accessToken, userId: user._id });
 
     return user;

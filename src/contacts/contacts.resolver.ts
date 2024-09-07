@@ -17,28 +17,24 @@ export class ContactsResolver {
   constructor(private readonly contactsService: ContactsService) {}
 
   @Query(() => ContactOutput)
-  async getContact(@Args('getContactInput') getContactInput: GetContactInput): Promise<Contact> {
-    return this.contactsService.getContact(getContactInput);
+  async getContact(@Args('input') input: GetContactInput): Promise<Contact> {
+    return this.contactsService.getContact(input);
   }
 
   @Query(() => [ContactOutput])
-  async getUserContactsList(@Args('getListInput') getListInput: GetContactInput) {
-    return this.contactsService.getUserContactList(getListInput);
+  async getUserContactsList(@Args('input') input: GetContactInput) {
+    return this.contactsService.getUserContactList(input);
   }
 
   @Mutation(() => ContactOutput)
-  async createContact(
-    @Args('createContactInput') createContactInput: CreateContactInput,
-  ): Promise<Contact> {
-    return this.contactsService.createContact(createContactInput);
+  async createContact(@Args('input') input: CreateContactInput): Promise<Contact> {
+    return this.contactsService.createContact(input);
   }
 
   @Mutation(() => ContactServiceResult)
-  async updateContact(
-    @Args('updateContactInput') updateContactInput: UpdateContactInput,
-  ): Promise<ContactServiceResult> {
+  async updateContact(@Args('input') input: UpdateContactInput): Promise<ContactServiceResult> {
     try {
-      await this.contactsService.updateContact(updateContactInput);
+      await this.contactsService.updateContact(input);
 
       return {
         message: 'Contact updated succesfully!',
@@ -51,10 +47,8 @@ export class ContactsResolver {
   }
 
   @Mutation(() => ContactServiceResult)
-  async deleteContact(
-    @Args('deleteContactInput') deleteContactInput: DeleteContactInput,
-  ): Promise<ContactServiceResult> {
-    await this.contactsService.deleteContact(deleteContactInput);
+  async deleteContact(@Args('input') input: DeleteContactInput): Promise<ContactServiceResult> {
+    await this.contactsService.deleteContact(input);
 
     return {
       message: 'Contact deleted!',

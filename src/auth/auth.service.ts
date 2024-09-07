@@ -118,9 +118,9 @@ export class AuthService {
     await this.jwtModel.findOneAndDelete({ value: token });
   }
 
-  async validateUserCredentials(getUserInput: GetUserInput): Promise<User> {
-    const user = await this.userService.getUserByEmail(getUserInput);
-    const validPassword = await this.comparePassword(getUserInput.password, user.password);
+  async validateUserCredentials(input: GetUserInput): Promise<User> {
+    const user = await this.userService.getUserByEmail(input);
+    const validPassword = await this.comparePassword(input.password, user.password);
 
     if (validPassword) {
       return user;
@@ -146,11 +146,11 @@ export class AuthService {
     }
   }
 
-  async signUpWithEmail(signUpInput: CreateUserInput) {
+  async signUpWithEmail(input: CreateUserInput) {
     const newUser = await this.userService.createNewUser({
-      email: signUpInput.email,
-      password: await this.encryptPassword(signUpInput.password),
-      fullName: signUpInput.fullName,
+      email: input.email,
+      password: await this.encryptPassword(input.password),
+      fullName: input.fullName,
     });
 
     newUser.refreshToken = await this.createJwtToken(TokenType.refresh, newUser);
@@ -160,8 +160,8 @@ export class AuthService {
     return { user: this.createUserResponse(user.toObject()), accessToken };
   }
 
-  async signInWithEmail(signInInput: GetUserInput) {
-    const user = await this.userService.getUserByEmail(signInInput);
+  async signInWithEmail(input: GetUserInput) {
+    const user = await this.userService.getUserByEmail(input);
     const accessToken = await this.createJwtToken(TokenType.access, user);
 
     return { user: this.createUserResponse(user.toObject()), accessToken };

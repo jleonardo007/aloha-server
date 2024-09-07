@@ -17,13 +17,11 @@ export class ContactsService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
-  async createContact(createContactInput: CreateContactInput): Promise<Contact> {
-    const contactInfoFromDB = await this.userModel
-      .findOne({ email: createContactInput.email })
-      .exec();
+  async createContact(input: CreateContactInput): Promise<Contact> {
+    const contactInfoFromDB = await this.userModel.findOne({ email: input.email }).exec();
     const { _id } = await new this.contactModel({
-      ...createContactInput,
-      createdBy: new mongo.ObjectId(createContactInput.createdBy),
+      ...input,
+      createdBy: new mongo.ObjectId(input.createdBy),
       user: contactInfoFromDB && contactInfoFromDB._id,
     }).save();
 
@@ -49,20 +47,20 @@ export class ContactsService {
       .exec();
   }
 
-  async updateContact(updateContactInput: UpdateContactInput): Promise<Contact> {
-    return this.contactModel.findByIdAndUpdate(updateContactInput.id, {
-      name: updateContactInput.name,
+  async updateContact(input: UpdateContactInput): Promise<Contact> {
+    return this.contactModel.findByIdAndUpdate(input.id, {
+      name: input.name,
     });
   }
 
-  async deleteContact(deleteContactInput: DeleteContactInput) {
-    return this.contactModel.findOneAndDelete({ _id: deleteContactInput.id });
+  async deleteContact(input: DeleteContactInput) {
+    return this.contactModel.findOneAndDelete({ _id: input.id });
   }
 
-  async getUserContactList(getListIput: GetContactInput) {
+  async getUserContactList(input: GetContactInput) {
     return this.contactModel
       .find({
-        createdBy: new mongo.ObjectId(getListIput.id),
+        createdBy: new mongo.ObjectId(input.id),
       })
       .populate({
         path: 'user',
