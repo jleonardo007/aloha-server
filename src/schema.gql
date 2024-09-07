@@ -197,7 +197,7 @@ type Query {
   users: [User!]!
 
   """Verifies if credentials cookie has ben expired"""
-  verifyExpiredCrendials: String!
+  verifyExpiredCredentials: String!
 }
 
 input TokenInput {

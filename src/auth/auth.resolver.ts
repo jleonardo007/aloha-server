@@ -53,13 +53,11 @@ export class AuthResolver {
   }
 
   @Query(() => String, { description: 'Verifies if credentials cookie has ben expired' })
-  verifyExpiredCrendials(@Context('req') request: Request): String {
+  verifyExpiredCredentials(@Context('req') request: Request): String {
     const credentials = request.cookies['credentials'];
 
     if (!credentials) {
-      throw new UnauthorizedException(NOT_AUTHORIZED.MESSAGE, {
-        description: NOT_AUTHORIZED.DESCRIPTION.CREDENTIALS_EXPIRED,
-      });
+      return 'CREDENTIALS_EXPIRED';
     }
 
     return 'CREDENTIALS_NOT_EXPIRED';
@@ -71,6 +69,9 @@ export class AuthResolver {
     @Args('input') input: CredentialInput,
   ) {
     const accessToken = await this.authService.getNewAccessToken(input.userId);
+
     this.authService.sendCredentialsCookie(response, { accessToken, userId: input.userId });
+
+    return 'CREDENTIAL_GENERATED';
   }
 }
