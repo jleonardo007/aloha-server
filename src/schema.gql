@@ -80,6 +80,10 @@ input CreateUserInput {
   status: String
 }
 
+input CredentialInput {
+  userId: String!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
@@ -179,6 +183,9 @@ type Query {
   chat(id: Int!): Chat!
   chats: [Chat!]!
   getContact(getContactInput: GetContactInput!): ContactOutput!
+
+  """Get new credentials cookie"""
+  getNewCredential(input: CredentialInput!): String!
   getUserContactsList(getListInput: GetContactInput!): [ContactOutput!]!
   group(id: Int!): Group!
   groups: [Group!]!
@@ -188,6 +195,8 @@ type Query {
   signInWithEmail(signInInput: GetUserInput!): UserOutput!
   signInWithGoogle(tokenInput: TokenInput!): UserOutput!
   users: [User!]!
+
+  """Verifies if credentials cookie has ben expired"""
   verifyExpiredCrendials: String!
 }
 

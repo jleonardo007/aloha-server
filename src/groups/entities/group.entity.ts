@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 import { Schema as MongooseSchema } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { User } from 'src/users/entities/user.entity';
@@ -35,17 +35,6 @@ export class Group {
   members: [User];
 
   @Prop({
-    type: [
-      {
-        type: MongooseSchema.Types.ObjectId,
-        ref: 'Message',
-      },
-    ],
-  })
-  @Field(() => [Message])
-  messages: [Message];
-
-  @Prop({
     minlength: 5,
     maxlength: 60,
   })
@@ -59,6 +48,15 @@ export class Group {
     nullable: true,
   })
   picture: string;
+
+  @Field(() => [Message], { defaultValue: [] })
+  messages: [Message];
 }
 
 export const GroupSchema = SchemaFactory.createForClass(Group);
+
+GroupSchema.virtual('messages', {
+  ref: 'Message',
+  localField: '_id',
+  foreignField: 'group',
+});

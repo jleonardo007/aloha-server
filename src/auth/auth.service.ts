@@ -13,6 +13,7 @@ import { UserOutput } from 'src/users/dto/user.output';
 import { NOT_AUTHORIZED } from 'src/errors';
 import { TokenInput } from './dto/auth.input';
 import { JsonWebToken } from './entities/jwt-token.entity';
+
 const enum TokenType {
   access = 'access',
   refresh = 'refresh',
@@ -100,7 +101,7 @@ export class AuthService {
         console.error({ ...error, cause: 'refresh token expired' });
         await this.deleteJsonWebToken(user.refreshToken);
         user.refreshToken = await this.createJwtToken(TokenType.refresh, user);
-        user.save();
+        await user.save();
 
         return await this.createJwtToken(TokenType.access, user);
       }

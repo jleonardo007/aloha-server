@@ -3,7 +3,7 @@ import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { Response, Request } from 'express';
 import { CreateUserInput, GetUserInput } from 'src/users/dto/user.input';
 import { UserOutput } from 'src/users/dto/user.output';
-import { TokenInput } from './dto/auth.input';
+import { TokenInput, CredentialInput } from './dto/auth.input';
 import { LocalAuthGuard } from './guards/local.guard';
 import { AuthService } from './auth.service';
 import { Public } from 'src/decorators/public.decorator';
@@ -58,8 +58,8 @@ export class AuthResolver {
     return user;
   }
 
-  @Query(() => String)
-  verifyExpiredCrendials(@Context('req') request: Request): string {
+  @Query(() => String, { description: 'Verifies if credentials cookie has ben expired' })
+  verifyExpiredCrendials(@Context('req') request: Request): String {
     const credentials = request.cookies['credentials'];
 
     if (!credentials) {
@@ -69,5 +69,14 @@ export class AuthResolver {
     }
 
     return 'CREDENTIALS_NOT_EXPIRED';
+  }
+
+  @Query(() => String, { description: 'Get new credentials cookie' })
+  async getNewCredential(
+    @Context('res') response: Response,
+    @Args('input') input: CredentialInput,
+  ) {
+    const accessToken = await this.authService.getNewAccessToken(input.userId);
+    this.authService.sendCredentialsCookie(response, { accessToken, userId: input.userId });
   }
 }
