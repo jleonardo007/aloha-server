@@ -28,9 +28,10 @@ export class User {
 
   @Prop({
     minlength: 8,
+    default: '',
   })
-  @Field(() => String)
-  password: string;
+  @Field(() => String, { nullable: true })
+  password?: string;
 
   @Prop({
     minlength: 1,
@@ -46,14 +47,12 @@ export class User {
   @Field(() => String, {
     nullable: true,
   })
-  profilePicture: string;
+  profilePicture?: string;
 
   @Prop({
     default: 'Available',
   })
-  @Field(() => String, {
-    nullable: true,
-  })
+  @Field(() => String)
   status: string;
 
   @Prop({
@@ -63,7 +62,7 @@ export class User {
   isCloseAccount: boolean;
 
   @Prop({
-    default: '',
+    required: true,
   })
   @Field(() => String)
   refreshToken: string;
@@ -77,20 +76,11 @@ export class User {
   @Field(() => [Contact], { defaultValue: [] })
   contacts: Contact[];
 
-  @Field(() => [Group], { defaultValue: [] })
-  groups: Group[];
-
   @Field(() => [Chat], { defaultValue: [] })
-  sentChats: Chat[];
-
-  @Field(() => [Chat])
-  receivedChats: Chat[];
+  chats: Chat[];
 
   @Field(() => [Call], { defaultValue: [] })
-  sentCalls: Call[];
-
-  @Field(() => [Call])
-  receivedCalls: Call[];
+  calls: Call[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -101,26 +91,16 @@ UserSchema.virtual('contacts', {
   foreignField: 'createdBy',
 });
 
-UserSchema.virtual('sentChats', {
+UserSchema.virtual('chats', {
   ref: 'Chat',
   localField: '_id',
-  foreignField: 'sentBy',
+  foreignField: 'members',
+  justOne: false,
 });
 
-UserSchema.virtual('receivedChats', {
-  ref: 'Chat',
-  localField: '_id',
-  foreignField: 'receivedBy',
-});
-
-UserSchema.virtual('sentCalls', {
+UserSchema.virtual('calls', {
   ref: 'Call',
   localField: '_id',
-  foreignField: 'sentBy',
-});
-
-UserSchema.virtual('receivedCalls', {
-  ref: 'Call',
-  localField: '_id',
-  foreignField: 'receivedBy',
+  foreignField: 'members',
+  justOne: false,
 });

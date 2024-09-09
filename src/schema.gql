@@ -7,17 +7,22 @@ type Call {
   duration: String!
   finishedAt: DateTime!
   isMissed: Boolean!
-  receivedBy: String!
-  sentBy: String!
+  members: [User!]!
   startedAt: DateTime!
 }
 
 type Chat {
   _id: String!
-  lastMessageTime: DateTime!
+  groupName: String
+  groupPicture: String
+  members: [User!]!
   messages: [Message!]!
-  receivedBy: String!
-  sentBy: String!
+  type: ChatType!
+}
+
+enum ChatType {
+  GROUP
+  PRIVATE
 }
 
 type Contact {
@@ -38,6 +43,11 @@ type ContactOutput {
 
 type ContactServiceResult {
   message: String!
+}
+
+type Content {
+  media: Media
+  text: String!
 }
 
 input CreateCallInput {
@@ -112,33 +122,29 @@ type Group {
 }
 
 type Media {
-  type: String!
+  type: MediaType!
   url: String!
+}
+
+enum MediaType {
+  IMAGE
+  VOICE_NOTE
 }
 
 type Message {
   _id: String!
   chat: String!
-  deletedBy: User!
+  content: Content!
 
   """User that sends the message"""
   from: User!
-
-  """User that sends chat"""
-  group: String!
-  hasMedia: Boolean!
-  isDeleted: Boolean!
   isRead: Boolean!
-  media: Media!
 
   """User ids that read the message"""
   readBy: [String!]!
   receivedAt: DateTime!
-
-  """Message replied id"""
-  repliedTo: String!
+  replyTo: Message
   sentAt: DateTime!
-  textContent: String!
 
   """Users that receive the message"""
   to: [User!]!
@@ -241,20 +247,17 @@ input UpdateMessageInput {
 
 type User {
   _id: String!
+  calls: [Call!]!
+  chats: [Chat!]!
   contacts: [Contact!]!
   email: String!
   fullName: String!
-  groups: [Group!]!
   isCloseAccount: Boolean!
   lastTimeConnected: DateTime!
-  password: String!
+  password: String
   profilePicture: String
-  receivedCalls: [Call!]!
-  receivedChats: [Chat!]!
   refreshToken: String!
-  sentCalls: [Call!]!
-  sentChats: [Chat!]!
-  status: String
+  status: String!
 }
 
 type UserOutput {
@@ -264,9 +267,8 @@ type UserOutput {
   contacts: [Contact!]!
   email: String!
   fullName: String!
-  groups: [Group!]!
   isCloseAccount: Boolean!
   lastTimeConnected: DateTime!
   profilePicture: String
-  status: String
+  status: String!
 }

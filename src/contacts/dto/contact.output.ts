@@ -3,16 +3,7 @@ import { User } from 'src/users/entities/user.entity';
 
 @ObjectType()
 class PartialUser extends PartialType(
-  OmitType(User, [
-    'password',
-    'refreshToken',
-    'contacts',
-    'groups',
-    'receivedCalls',
-    'sentCalls',
-    'sentChats',
-    'receivedChats',
-  ]),
+  OmitType(User, ['password', 'refreshToken', 'contacts', 'chats', 'calls']),
 ) {}
 
 @ObjectType()
