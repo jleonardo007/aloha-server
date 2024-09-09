@@ -9,7 +9,6 @@ import { JwtService, JwtSignOptions, TokenExpiredError } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserInput, GetUserInput } from 'src/users/dto/user.input';
-import { UserOutput } from 'src/users/dto/user.output';
 import { NOT_AUTHORIZED } from 'src/errors';
 import { TokenInput } from './dto/auth.input';
 import { JsonWebToken } from './entities/jwt-token.entity';
