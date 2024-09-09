@@ -2,7 +2,6 @@ import { ObjectType, Field, GraphQLISODateTime } from '@nestjs/graphql';
 import { Schema as MongooseSchema } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Contact } from 'src/contacts/entities/contact.entity';
-import { Group } from 'src/groups/entities/group.entity';
 import { Chat } from 'src/chats/entities/chat.entity';
 import { Call } from 'src/calls/entities/call.entity';
 @ObjectType()
@@ -27,8 +26,8 @@ export class User {
   email: string;
 
   @Prop({
+    type: String,
     minlength: 8,
-    default: '',
   })
   @Field(() => String, { nullable: true })
   password?: string;
@@ -61,9 +60,7 @@ export class User {
   @Field(() => Boolean)
   isCloseAccount: boolean;
 
-  @Prop({
-    required: true,
-  })
+  @Prop(String)
   @Field(() => String)
   refreshToken: string;
 
