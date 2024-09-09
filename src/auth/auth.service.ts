@@ -67,20 +67,6 @@ export class AuthService {
     return token;
   }
 
-  private createUserResponse(user: User): UserOutput {
-    return {
-      ...user,
-      chats: [
-        ...(user.sentChats ? user.sentChats : []),
-        ...(user.receivedChats ? user.receivedChats : []),
-      ],
-      calls: [
-        ...(user.sentCalls ? user.sentCalls : []),
-        ...(user.receivedCalls ? user.receivedCalls : []),
-      ],
-    };
-  }
-
   async getNewAccessToken(userId: string): Promise<string> {
     const user = await this.userService.getUser(userId);
     const isJwtRevoved = await this.isTokenRevoked(user.refreshToken);
@@ -157,14 +143,14 @@ export class AuthService {
     const user = await newUser.save();
     const accessToken = await this.createJwtToken(TokenType.access, newUser);
 
-    return { user: this.createUserResponse(user.toObject()), accessToken };
+    return { user, accessToken };
   }
 
   async signInWithEmail(input: GetUserInput) {
     const user = await this.userService.getUserByEmail(input);
     const accessToken = await this.createJwtToken(TokenType.access, user);
 
-    return { user: this.createUserResponse(user.toObject()), accessToken };
+    return { user, accessToken };
   }
 
   async signUpWithGoogle(token: TokenInput) {
@@ -175,11 +161,10 @@ export class AuthService {
       profilePicture: payload.picture,
     });
     const accessToken = await this.createJwtToken(TokenType.access, newUser);
-
     newUser.refreshToken = await this.createJwtToken(TokenType.refresh, newUser);
-    await newUser.save();
+    const user = await newUser.save();
 
-    return { user: this.createUserResponse(newUser.toObject()), accessToken };
+    return { user, accessToken };
   }
 
   async signInWithGoogle(token: TokenInput) {
@@ -187,7 +172,7 @@ export class AuthService {
     const user = await this.userService.getUserByEmail({ email: payload.email, password: '' });
     const accessToken = await this.createJwtToken(TokenType.access, user);
 
-    return { user: this.createUserResponse(user.toObject()), accessToken };
+    return { user, accessToken };
   }
 
   sendCredentialsCookie(response: Response, credentials) {

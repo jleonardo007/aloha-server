@@ -25,20 +25,31 @@ export class UsersService {
           model: 'User',
         },
       })
-      .populate('sentChats', {
-        populate: {
-          path: 'messages',
-          model: 'Message',
+      .populate({
+        path: 'calls',
+        options: {
+          sort: {
+            createdAt: -1,
+          },
         },
       })
-      .populate('receivedChats', {
+      .populate({
+        path: 'chats',
+        options: {
+          sort: {
+            createdAt: -1,
+          },
+        },
         populate: {
           path: 'messages',
-          model: 'Message',
+          options: {
+            sort: {
+              createAt: -1,
+            },
+            limit: 30,
+          },
         },
       })
-      .populate('sentCalls')
-      .populate('receivedCalls')
       .exec();
 
     if (!user) {
